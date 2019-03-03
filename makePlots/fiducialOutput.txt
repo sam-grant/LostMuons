@@ -1,0 +1,112 @@
+
+##################################################
+Stn 12
+Fiducial
+Lost Muon Efficiency  = 72.0003 +/- 2.24572%
+Non Lost Muons Efficiency  = 88.2467 +/- 0.197078%
+Scale Factor Lost Muons = 1.38888
+Scale Factor Non Lost Muons = 1.13319
+##################################################
+
+##################################################
+Stn 18
+Fiducial
+Lost Muon Efficiency  = 63.8244 +/- 1.42175%
+Non Lost Muons Efficiency  = 88.0881 +/- 0.192664%
+Scale Factor Lost Muons = 1.5668
+Scale Factor Non Lost Muons = 1.13523
+##################################################
+
+##################################################
+Stn 12
+Non Fiducial
+Lost Muon Efficiency  = 60.6194 +/- 2.0084%
+Non Lost Muons Efficiency  = 85.978 +/- 0.206168%
+Scale Factor Lost Muons = 1.64964
+Scale Factor Non Lost Muons = 1.16309
+##################################################
+
+##################################################
+Stn 18
+Non Fiducial
+Lost Muon Efficiency  = 58.4233 +/- 1.07965%
+Non Lost Muons Efficiency  = 83.8505 +/- 0.194721%
+Scale Factor Lost Muons = 1.71164
+Scale Factor Non Lost Muons = 1.1926
+##################################################
+
+dt
+ 
+##################################################
+Stn 12
+Fiducial
+Lost Muon Efficiency  = 71.0152 +/- 2.03853%
+Non Lost Muons Efficiency  = 88.1712 +/- 0.197635%
+Scale Factor Lost Muons = 1.40815
+Scale Factor Non Lost Muons = 1.13416
+##################################################
+
+##################################################
+Stn 18
+Fiducial
+Lost Muon Efficiency  = 63.5186 +/- 1.25872%
+Non Lost Muons Efficiency  = 88.0063 +/- 0.206221%
+Scale Factor Lost Muons = 1.57434
+Scale Factor Non Lost Muons = 1.13628
+##################################################
+
+##################################################
+Stn 12
+Non Fiducial
+Lost Muon Efficiency  = 59.2993 +/- 1.85454%
+Non Lost Muons Efficiency  = 85.9073 +/- 0.20009%
+Scale Factor Lost Muons = 1.68636
+Scale Factor Non Lost Muons = 1.16405
+##################################################
+
+##################################################
+Stn 18
+Non Fiducial
+Lost Muon Efficiency  = 57.8478 +/- 1.38693%
+Non Lost Muons Efficiency  = 83.7713 +/- 0.192614%
+Scale Factor Lost Muons = 1.72867
+Scale Factor Non Lost Muons = 1.19373
+##################################################
+
+dtdR
+
+##################################################
+Stn 12
+Fiducial
+Lost Muon Efficiency  = 67.874 +/- 2.13958%
+Non Lost Muons Efficiency  = 87.5785 +/- 0.197474%
+Scale Factor Lost Muons = 1.47332
+Scale Factor Non Lost Muons = 1.14183
+##################################################
+
+##################################################
+Stn 18
+Fiducial
+Lost Muon Efficiency  = 61.3325 +/- 1.33786%
+Non Lost Muons Efficiency  = 87.4125 +/- 0.192326%
+Scale Factor Lost Muons = 1.63046
+Scale Factor Non Lost Muons = 1.144
+##################################################
+
+##################################################
+Stn 12
+Non Fiducial
+Lost Muon Efficiency  = 56.4796 +/- 1.70756%
+Non Lost Muons Efficiency  = 85.378 +/- 0.198998%
+Scale Factor Lost Muons = 1.77055
+Scale Factor Non Lost Muons = 1.17126
+##################################################
+
+##################################################
+Stn 18
+Non Fiducial
+Lost Muon Efficiency  = 55.9447 +/- 1.24922%
+Non Lost Muons Efficiency  = 83.2171 +/- 0.188373%
+Scale Factor Lost Muons = 1.78748
+Scale Factor Non Lost Muons = 1.20168
+##################################################

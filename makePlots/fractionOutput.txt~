@@ -1,0 +1,23 @@
+With radial and time matching switched on
+
+##################################################
+Stn 12
+Lost Muon Fraction = 0.0427212 +/- 0.000797723
+Non Lost Muon Fraction = 0.957279 +/- 0.00151514
+Lost Muon Efficiency  = 69.5894 +/- 1.29943%
+Non Lost Muons Efficiency  = 94.8129 +/- 0.150066%
+Scale Factor Lost Muons = 1.437
+Scale Factor Non Lost Muons = 1.05471
+##################################################
+
+##################################################
+Stn 18
+Lost Muon Fraction = 0.0596071 +/- 0.000862173
+Non Lost Muon Fraction = 0.940393 +/- 0.00145888
+Lost Muon Efficiency  = 62.8259 +/- 0.90873%
+Non Lost Muons Efficiency  = 94.574 +/- 0.146717%
+Scale Factor Lost Muons = 1.5917
+Scale Factor Non Lost Muons = 1.05737
+##################################################
+
+

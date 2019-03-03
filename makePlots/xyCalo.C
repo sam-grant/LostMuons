@@ -1,0 +1,181 @@
+//Code to make xy calo plots - Sorry about the lack of 'for' loops!
+// Sam Grant - March 2019
+
+#include <iostream>
+#include "TFile.h"
+#include "TH1D.h"
+#include "TCanvas.h"
+#include "TStyle.h"
+#include "TObject.h"
+
+using namespace std;
+
+int main() {
+  
+  const int stn = 18;
+
+  // Fiducial volume = 0 ; Non Fiducial Volume = 1
+  const int fid = 1;
+  string fiducial;
+
+  if (fid == 0 ) { fiducial = "Fiducial"; }
+  if (fid == 1 ) { fiducial = "Non Fiducial"; }
+
+  TFile *f1 = TFile::Open("../tracker/merged_tracker.root");
+  TFile *f2 = TFile::Open("../cluster_master/merged_cluster.root");
+  TFile *f3 = TFile::Open("../tracker_fiducial/merged_fiducial_tracker.root");
+  TFile *f4 = TFile::Open("../cluster_fiducial/merged_fiducial_cluster.root");
+
+  string h1 = "St"+to_string(stn)+"_xy_calo";
+  string h2 = "St"+to_string(stn)+"_xy_calo_fit";
+  string h3 = "St"+to_string(stn)+"_n_xy_calo";
+  string h4 = "St"+to_string(stn)+"_n_xy_calo_fit";
+  string h5 = "St"+to_string(stn)+"_mu_xy_calo";
+  string h6 = "St"+to_string(stn)+"_mu_xy_calo_fit";
+  string h7 = "St"+to_string(stn)+"_n_xy_calo_dtdR_"+to_string(fid);
+  string h8 = "St"+to_string(stn)+"_n_xy_calo_fit_dtdR_"+to_string(fid);
+  string h9 = "St"+to_string(stn)+"_mu_xy_calo_dtdR_"+to_string(fid);
+  string h10 = "St"+to_string(stn)+"_mu_xy_calo_fit_dtdR_"+to_string(fid);
+  string h11 = "St"+to_string(stn)+"_xy_calo_"+to_string(fid);
+  string h12 = "St"+to_string(stn)+"_xy_calo_fit_"+to_string(fid);
+
+  string fname1 = "../plots/stn"+to_string(stn)+"_xycalo_tracker.png";
+  string fname2 = "../plots/stn"+to_string(stn)+"_xycalo_tracker_fit.png";
+  string fname3 = "../plots/stn"+to_string(stn)+"_n_xycalo.png";
+  string fname4 = "../plots/stn"+to_string(stn)+"_n_xycalo_fit.png";
+  string fname5 = "../plots/stn"+to_string(stn)+"_mu_xycalo.png";
+  string fname6 = "../plots/stn"+to_string(stn)+"_mu_xycalo_fit.png";
+  string fname7 = "../plots/stn"+to_string(stn)+"_fid_n_xycalo_"+to_string(fid)+".png";
+  string fname8 = "../plots/stn"+to_string(stn)+"_fid_n_xycalo_fit_"+to_string(fid)+".png";
+  string fname9 = "../plots/stn"+to_string(stn)+"_fid_mu_xycalo_"+to_string(fid)+".png";
+  string fname10 = "../plots/stn"+to_string(stn)+"_fid_mu_xycalo_fit_"+to_string(fid)+".png";
+  string fname11 = "../plots/stn"+to_string(stn)+"_fid_tracker_xycalo_"+to_string(fid)+".png";
+  string fname12 = "../plots/stn"+to_string(stn)+"_fid_tracker_xycalo_fit_"+to_string(fid)+".png";
+
+
+  string title1 = "Stn "+to_string(stn)+" | XY Calo - All Tracks (Tracker);X Calo Decay Vertex [mm];Y Calo Decay Vertex";
+  string title2 = "Stn "+to_string(stn)+" | XY Calo - All Tracks (Tracker) in Fit Region;X Calo Decay Vertex [mm];Y Calo Decay Vertex";
+  string title3 = "Stn "+to_string(stn)+" | XY Calo - Non Lost Muons (Tracker & Calo);X Calo Decay Vertex [mm];Y Calo Decay Vertex";
+  string title4 = "Stn "+to_string(stn)+" | XY Calo - Non Lost Muons (Tracker & Calo) in Fit Region;X Calo Decay Vertex [mm];Y Calo Decay Vertex";
+  string title5 = "Stn "+to_string(stn)+" | XY Calo - Lost Muons (Tracker & Calo);X Calo Decay Vertex [mm];Y Calo Decay Vertex";
+  string title6 = "Stn "+to_string(stn)+" | XY Calo - Lost Muons (Tracker & Calo) in Fit Region;X Calo Decay Vertex [mm];Y Calo Decay Vertex";
+  string title7 = "Stn "+to_string(stn)+" | XY Calo - "+fiducial+" Non Lost Muons (Tracker & Calo);X Calo Decay Vertex [mm];Y Calo Decay Vertex";
+  string title8 = "Stn "+to_string(stn)+" | XY Calo - "+fiducial+" Non Lost Muons (Tracker & Calo) in Fit Region;X Calo Decay Vertex [mm];Y Calo Decay Vertex";
+  string title9 = "Stn "+to_string(stn)+" | XY Calo - "+fiducial+" Lost Muons (Tracker & Calo);X Calo Decay Vertex [mm];Y Calo Decay Vertex";
+  string title10 = "Stn "+to_string(stn)+" | XY Calo - "+fiducial+" Lost Muons (Tracker & Calo) in Fit Region;X Calo Decay Vertex [mm];Y Calo Decay Vertex";
+  string title11 = "Stn "+to_string(stn)+" | XY Calo - "+fiducial+" All Tracks (Tracker);X Calo Decay Vertex [mm];Y Calo Decay Vertex";
+  string title12 = "Stn "+to_string(stn)+" | XY Calo - "+fiducial+" All Tracks (Tracker) in Fit Region;X Calo Decay Vertex [mm];Y Calo Decay Vertex";
+ 
+  TH1D *xy1 = (TH1D*)f1->Get(h1.c_str());
+  TH1D *xy2 = (TH1D*)f1->Get(h2.c_str());
+  TH1D *xy3 = (TH1D*)f2->Get(h3.c_str());
+  TH1D *xy4 = (TH1D*)f2->Get(h4.c_str());
+  TH1D *xy5 = (TH1D*)f2->Get(h5.c_str());
+  TH1D *xy6 = (TH1D*)f2->Get(h6.c_str());
+  TH1D *xy7 = (TH1D*)f4->Get(h7.c_str());
+  TH1D *xy8 = (TH1D*)f4->Get(h8.c_str());
+  TH1D *xy9 = (TH1D*)f4->Get(h9.c_str());
+  TH1D *xy10 = (TH1D*)f4->Get(h10.c_str());
+  TH1D *xy11 = (TH1D*)f3->Get(h11.c_str());
+  TH1D *xy12 = (TH1D*)f3->Get(h12.c_str());
+
+  xy1->SetStats(0);
+  xy2->SetStats(0);
+  xy3->SetStats(0);
+  xy4->SetStats(0);
+  xy5->SetStats(0);
+  xy6->SetStats(0);
+  xy7->SetStats(0);
+  xy8->SetStats(0);
+  xy9->SetStats(0);
+  xy10->SetStats(0);
+  xy11->SetStats(0);
+  xy12->SetStats(0);
+  
+
+  TCanvas *c1 = new TCanvas();//"c1","c2",200,(UInt_t)700*8.33,(UInt_t)500*8.33);
+  gStyle->SetPalette(55);
+  xy1->Draw("COLZ");
+  xy1->SetTitle(title1.c_str());
+  c1 -> SaveAs(fname1.c_str());
+  delete xy1,c1;
+
+  TCanvas *c2 = new TCanvas();
+  gStyle->SetPalette(55);
+  xy2->Draw("COLZ");
+  xy2->SetTitle(title2.c_str());
+  c2 -> SaveAs(fname2.c_str());
+  delete xy2,c2;
+
+  TCanvas *c3 = new TCanvas();
+  gStyle->SetPalette(55);
+  xy3->Draw("COLZ");
+  xy3->SetTitle(title3.c_str());
+  c3 -> SaveAs(fname3.c_str());
+  delete xy3,c3;
+
+  TCanvas *c4 = new TCanvas();
+  gStyle->SetPalette(55);
+  xy4->Draw("COLZ");
+  xy4->SetTitle(title4.c_str());
+  c4 -> SaveAs(fname4.c_str());
+  delete xy4,c4;
+
+  TCanvas *c5 = new TCanvas();
+  gStyle->SetPalette(55);
+  xy5->Draw("COLZ");
+  xy5->SetTitle(title5.c_str());
+  c5 -> SaveAs(fname5.c_str());
+  delete xy5,c5;
+
+  TCanvas *c6 = new TCanvas();
+  gStyle->SetPalette(55);
+  xy6->Draw("COLZ");
+  xy6->SetTitle(title6.c_str());
+  c6 -> SaveAs(fname6.c_str());
+  delete xy6,c6;
+
+  TCanvas *c7 = new TCanvas();
+  gStyle->SetPalette(55);
+  xy7->Draw("COLZ");
+  xy7->SetTitle(title7.c_str());
+  c7 -> SaveAs(fname7.c_str());
+  delete xy7,c7;
+
+  TCanvas *c8 = new TCanvas();
+  gStyle->SetPalette(55);
+  xy8->Draw("COLZ");
+  xy8->SetTitle(title8.c_str());
+  c8 -> SaveAs(fname8.c_str());
+  delete xy8,c8;
+
+  TCanvas *c9 = new TCanvas();
+  gStyle->SetPalette(55);
+  xy9->Draw("COLZ");
+  xy9->SetTitle(title9.c_str());
+  c9 -> SaveAs(fname9.c_str());
+  delete xy9,c9;
+
+  TCanvas *c10 = new TCanvas();
+  xy10->Draw("COLZ");
+  xy10->SetTitle(title10.c_str());
+  c10 -> SaveAs(fname10.c_str());
+  delete xy10,c10;
+
+  TCanvas *c11 = new TCanvas();
+  gStyle->SetPalette(55);
+  xy11->Draw("COLZ");
+  xy11->SetTitle(title11.c_str());
+  c11 -> SaveAs(fname11.c_str());
+  delete xy11,c11;
+
+  TCanvas *c12 = new TCanvas();
+  gStyle->SetPalette(55);
+  xy12->Draw("COLZ");
+  xy12->SetTitle(title12.c_str());
+  c12 -> SaveAs(fname12.c_str());
+  delete xy12,c12;
+
+  return 0;
+
+} 
