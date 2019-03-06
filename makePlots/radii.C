@@ -7,16 +7,17 @@
 #include "TPaveStats.h"
 #include "TStyle.h"
 #include "TLegend.h"
+#include "TLatex.h"
 
 using namespace std;
 
 int main() {
 
-  int stn = 12;
+  const int stn = 18;
 
   // Apply scaling? 
   // s = 0 scale=true ; s = 1 scale=false
-  int s = 1; 
+  const int s = 1; 
 
   double sfMu;
   // double sfMu_err;
@@ -41,8 +42,10 @@ int main() {
   string h1 = "St"+to_string(stn)+"_radius";
   string h2 = "St"+to_string(stn)+"_mu_radius";
   string h3 = "St"+to_string(stn)+"_n_radius";
+
   string fname1;
   string fname2 = "../plots/stn"+to_string(stn)+"_tracker_radius_check.pdf";
+
   if (s == 0 ) {
     fname1 = "../plots/stn"+to_string(stn)+"_tracker_radius_subtracted.pdf";
   }
@@ -51,7 +54,8 @@ int main() {
   }
 
   string title1 = "Stn "+to_string(stn)+" | Radial Decay Vertices;Radial Decay Vertex [mm];Number of Hits";
-  string title2 = "Stn "+to_string(stn)+" | Sanity Check";
+
+  // string title2 = "Stn "+to_string(stn)+" | Sanity Check";
 
   TFile *f1 = TFile::Open("../tracker/merged_tracker.root");
   TFile *f2 = TFile::Open("../cluster_master/merged_cluster.root");
@@ -68,10 +72,10 @@ int main() {
  
   // Subtract
   TH1D *subMu = (TH1D*)tr->Clone("subMu");
-  TH1D *subN = (TH1D*)tr->Clone("subN");
+  //  TH1D *subN = (TH1D*)tr->Clone("subN");
 
   subMu -> Add(mu,-1);
-  subN -> Add(n, -1);
+  //  subN -> Add(n, -1);
 
   //  delete n, mu; 
 
@@ -79,15 +83,19 @@ int main() {
 
   tr->SetName("All Tracks");
   if ( s == 0 ) {
-    subMu->SetName("All Tracks Minus Lost Muons (Scaled)");
+    subMu->SetName("All Tracks  #minus Lost Muons  (Scaled)");
 
-    subN->SetName("All Tracks Minus Non Lost Muons (Scaled)");
+    //    subN->SetName("All Tracks  #minus Lost Muons(Scaled)");
+
+    mu->SetName("Lost Muons (Scaled)");
   }
 
   else if ( s == 1 ) {
-    subMu->SetName("All Tracks Minus Lost Muons (Unscaled)");
+    subMu->SetName("All Tracks  #minus Lost Muons  (Unscaled)");
 
-    subN->SetName("All Tracks Minus Non Lost Muons (Unscaled)");
+    //    subN->SetName("All Tracks  #minus Non Lost Muons (Unscaled)");
+
+    mu->SetName("Lost Muons (Unscaled)");
   }
 
   f1->Save();
@@ -102,10 +110,10 @@ int main() {
 
   TPaveStats *tps1 = (TPaveStats*) tr -> FindObject("stats"); 
 
-  tps1->SetTextColor(kBlack);
-  tps1->SetLineColor(kBlack);
+  tps1->SetTextColor(kBlue+2);
+  tps1->SetLineColor(kBlue+2);
   
-  tps1->SetX1NDC(0.75);
+  tps1->SetX1NDC(0.80);
   tps1->SetX2NDC(0.99);
   tps1->SetY1NDC(0.85);
   tps1->SetY2NDC(0.99);
@@ -134,16 +142,16 @@ int main() {
   tps2->SetY2NDC(Y1);
 
   // Draw third histogram
-  subN -> Draw();
+  mu -> Draw();
   gStyle->SetOptStat(2211);
   gPad->Update();
 
   // Collect stats of the third histogram
 
-  TPaveStats *tps3 = (TPaveStats*) subN -> FindObject("stats");
-  
-  tps3->SetTextColor(kBlue+2);
-  tps3->SetLineColor(kBlue+2);
+  TPaveStats *tps3 = (TPaveStats*) mu -> FindObject("stats");
+ 
+  tps3->SetTextColor(kGreen+2);
+  tps3->SetLineColor(kGreen+2);
 
   // Put stat box beneath the first
   tps3->SetX1NDC(X1);
@@ -154,23 +162,42 @@ int main() {
   // Draw histograms on one canvas
 
   TCanvas *c1 = new TCanvas();
-  // gStyle->SetOptStat(2211);
-  tr->SetMarkerColor(kBlack);
-  tr->SetLineColor(kBlack);
+
+  c1->Divide(1,2);
+  c1->cd(1);
+
+  tr->SetMarkerColor(kBlue+2);
+  tr->SetLineColor(kBlue+2);
   subMu->SetMarkerColor(kRed+2);
   subMu->SetLineColor(kRed+2);
-  subN->SetMarkerColor(kBlue+2);
-  subN->SetLineColor(kBlue+2);
-  // tr->GetYaxis()->SetRangeUser(0,1E7);
-  tr->GetXaxis()->SetRangeUser(-250,250);
+  // subN->SetMarkerColor(kBlue+2);
+  //  subN->SetLineColor(kBlue+2);
+  mu->SetMarkerColor(kGreen+2);
+  mu->SetLineColor(kGreen+2);
+  tr->GetXaxis()->SetRangeUser(-150,150);
   tr->SetTitle(title1.c_str());
-  // c1->SetLogy();
+  c1->cd(1)->SetLogy();
   tr->Draw();
   subMu->Draw("same");
-  subN->Draw("same");
+  mu->Draw("same");
   tps1->Draw("same"); 
   tps2->Draw("same");
-  tps3->Draw("same");  
+  tps2->Draw("same");
+  c1->cd(2);
+  TH1D *ratio = (TH1D*)subMu->Clone("ratio");
+  ratio->Divide(tr);
+  ratio->SetStats(0);
+  ratio->SetTitle("Ratio: (All Tracks  #minus Lost Muons) / All Tracks");
+  ratio->SetMarkerColor(kBlack);
+  ratio->SetLineColor(kBlack);
+  ratio->GetYaxis()->SetRangeUser(0.4,1.5);
+  ratio->GetYaxis()->SetTitle("Ratio");
+  ratio->GetXaxis()->SetRangeUser(-150,150);
+  ratio->GetXaxis()->SetTitle("Radial Decay Vertex [mm]");
+  gPad->SetGrid();
+  ratio->Draw();
+  
+  // tps3->Draw("same");  
   c1 -> SaveAs(fname1.c_str());
 
   /*
@@ -186,8 +213,8 @@ int main() {
   combine->SetStats(0);
   tr->SetMarkerColor(kGreen+2);
   tr->SetLineColor(kGreen+2);
-  combine->SetMarkerColor(kMagenta+2);
-  combine->SetLineColor(kMagenta+2);
+  combine->SetMarkerColor(kGreen+2);
+  combine->SetLineColor(kGreen+2);
   tr->Draw();
   combine->Draw("same");
   c2->BuildLegend(0.69,0.80,0.99,0.99);
@@ -198,6 +225,6 @@ int main() {
 
   */
     
-  delete c1, c2, tr, subN, subMu, combine;
+  delete c1, tr, subMu, ratio;//, combine;
   return 0;
 } 
