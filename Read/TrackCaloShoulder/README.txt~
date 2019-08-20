@@ -1,0 +1,6 @@
+Investigate the high momentum shoulder. Does it contain lost muons (is the log(E/p) cut sufficient).
+
+1) Implement a high energy cut in the momentum regime of lost muons
+2) Implement a wider lost muon cut
+
+Check the difference between the two in momentum space. 

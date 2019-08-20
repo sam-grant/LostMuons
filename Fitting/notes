@@ -1,0 +1,32 @@
+
+
+
+
+1) download randomlib:
+https://sourceforge.net/projects/randomlib/
+
+cd build
+wget https://downloads.sourceforge.net/project/randomlib/distrib/RandomLib-1.10.tar.gz
+tar -zxvf RandomLib-1.10.tar.gz
+mkdir RandomLib-1.10-build ; cd RandomLib-1.10-build
+cmake -DCMAKE_INSTALL_PREFIX=../../install ../RandomLib-1.10
+make
+make install
+
+
+
+2) compile the other bits of code needed:
+from the directory containing EuropaFitter_module.cc
+mkdir install/include/blinders
+mkdir include/RootManager
+cd build/gm2util
+edit Makefile, changing /scratch/gm2/gm2-git/Fitting/ to your path
+make
+
+
+3) then compile EuropaFitter_module (type make int he directory containing EuropaFitter_module.cc)
+
+4) copy a test file:
+/unix/atlasgenerators/hesketh/plots_60hr_15922.root
+compile EuropaFitter_module, and run!
+
