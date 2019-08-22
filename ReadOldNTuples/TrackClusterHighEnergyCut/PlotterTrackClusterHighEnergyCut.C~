@@ -1,0 +1,183 @@
+// General plotter using the cluster matched tree
+
+// gavin.hesketh@ucl.ac.uk
+// samuel.grant.18@ucl.ac.uk
+
+#define Plotter_cxx
+#include "Plotter.h"
+#include "TMath.h"
+
+const double pi = 3.14159265359;
+
+int CaloNum(int caloX, int caloY) {
+  return caloX+9*caloY;
+}
+void Plotter::InitTrees(TString input_file) {
+  //initialise the trees you want to read
+  //then enable the relevant branches in Reader.C
+   ctt = new clusterTrackerTrackReader(input_file, "clusterTracker");
+  // cr = new clusterTrackerClusterReader(input_file);
+  // cl = new clusterReader(input_file);
+  // tr = new trackerReader(input_file);
+}
+
+
+void Plotter::InitHistos() {
+
+
+  const double vRes = 1.5;
+  const double rRes = 1.0;
+  const double pRes = 0.03;
+
+  plot1D("dR",200,0,70,"dR [mm]","Entries");
+
+  // k=0, all particles; k=1, non lost muons; k=2, lost muons
+  for (int k(0); k<3; k++) {
+
+    plot1D("time_"+std::to_string(k),150*10,0,4200*150,"Decay Time [ns]","Entries");
+    plot1D("vertical_"+std::to_string(k), (120*2)/vRes,-120,120,"Vertical Decay Vertex [mm]","Entries");
+    plot1D("radial_"+std::to_string(k),(200*2)/rRes,-200,200,"Radial Decay Vertex [mm]","Entries");
+    plot1D("vertical60_"+std::to_string(k),(60*2)/vRes,-60,60,"Vertical Decay Vertex [mm]","Entries");
+    plot1D("radial60_"+std::to_string(k),(60*2)/rRes,-60,60,"Radial Decay Vertex [mm]","Entries");
+    plot1D("p_"+std::to_string(k),3500*pRes,0,3500,"Track Momentum [MeV]","Entries");
+    plot1D("logEop_"+std::to_string(k),200,-3.5,1,"Log(E/p)","Entries");
+    plot2D("xz_"+std::to_string(k),1000,-8000,1000,1000,-8000,8000,"Track Decay Vertex X [mm]","Track Decay Vertex Z [m]");
+    plot2D("Evp_"+std::to_string(k),1000,0,4000,1000,0,4000,"Track Momentum [MeV]","Cluster Energy [MeV]");
+
+    for (int stn(12); stn<19; stn=stn+6) {
+
+      plot1D("St"+std::to_string(stn)+"_time_"+std::to_string(k),150*10,0,4200*150,"Decay Time [ns]","Entries");
+      plot1D("St"+std::to_string(stn)+"_vertical_"+std::to_string(k),(120*2)/vRes,-120,120,"Vertical Decay Vertex [mm]","Entries");
+      plot1D("St"+std::to_string(stn)+"_radial_"+std::to_string(k), (200*2)/rRes,-200,200,"Radial Decay Vertex [mm]","Entries");
+      plot1D("St"+std::to_string(stn)+"_vertical60_"+std::to_string(k),(60*2)/vRes,-60,60,"Vertical Decay Vertex [mm]","Entries");
+      plot1D("St"+std::to_string(stn)+"_radial60_"+std::to_string(k),(60*2)/rRes,-60,60,"Radial Decay Vertex [mm]","Entries");
+      plot1D("St"+std::to_string(stn)+"_p_"+std::to_string(k),3500*pRes,0,3500,"Track Momentum [MeV]","Entries");
+      plot2D("St"+std::to_string(stn)+"_xz_"+std::to_string(k),1000,-8000,1000,1000,-8000,8000,"Track Decay Vertex X [mm]","Track Decay Vertex Z [mm]");
+      plot2D("St"+std::to_string(stn)+"_Evp_"+std::to_string(k),1000,0,4000,1000,0,4000,"Track Momentum [MeV]","Cluster Energy [MeV]");
+      plot1D("St"+std::to_string(stn)+"_dt_"+std::to_string(k),200,-15,15,"dt [ns]","Entries");
+      plot1D("St"+std::to_string(stn)+"_logEop_"+std::to_string(k),200,-3.5,1,"Log(E/p)","Entries");
+
+    }
+  }
+}
+
+
+void Plotter::Run() {
+  
+  while( NextClTrTrEvent() ) {
+    
+    // Hit volume and p value cut
+    if(ctt->hitVolume == true) continue;
+    if(ctt->trackPValue < 0.05) continue;
+
+    // Define variables
+    // Calo number
+    const int calo = ctt->clusterCaloNum;
+    // Track-cluster time difference
+    const double dt = ctt->trackTimeDiff;
+    // Log(E/p)
+    const double logEop = log(ctt->clusterEoverP);
+    // Backwards decay vertices
+    const double vTrX = ctt->decayVertexPosX;
+    const double vTrY = ctt->decayVertexPosY;
+    const double vTrZ = ctt->decayVertexPosZ;
+    // Magic radius
+    const double magicRadius = 7112; //[mm]
+    // Radial position backwards
+    const double R = sqrt(vTrX*vTrX+vTrZ*vTrZ) - magicRadius;
+    // Forwards calo decay vertices
+    const double cTrX = ctt->caloVertexPosX;
+    const double cTrY = ctt->caloVertexPosY;
+    // Cluster position
+    const double caloX_raw = ctt->clusterX;
+    const double caloY_raw = ctt->clusterY;
+    const double caloX = 112.5 - 25*(caloX_raw);
+    const double caloY = SetCaloY(ctt->clusterCaloNum, caloY_raw);
+    // Radial difference
+    const double dX = caloX - cTrX;
+    const double dY = caloY - cTrY;
+    const double dR = sqrt(dX*dX + dY*dY);
+    // Cluster energy
+    const double E = ctt->clusterE;
+    const double p = ctt -> trackMomentum;
+    // Decay time
+    const double t = (ctt -> decayTime);
+
+    // Track-cluster matching cuts
+    // Radial difference cut
+    if(dR>30) continue;
+    // Time difference cut
+    if(calo==13){
+      if (dt<-8 || dt>3 ) continue;
+    }
+    else {
+      if(dt<-9 || dt>1) continue;
+    }
+    // Clean up zeros
+    if (vTrX == 0 || vTrY == 0 || vTrZ == 0) continue;
+
+    // Lost muon selection
+    bool lostMu = false;
+    if (-3.2 < logEop && logEop < -2.4 && p > 2300) lostMu = true;
+    int k = 0;
+    if (!lostMu) k=1;
+    if (lostMu) k=2;
+    if (k==0) std::cout<<"**Error**"<<std::endl;
+
+    // Fill histograms 
+
+    Fill1D("dR",dR);
+
+    Fill1D("time_0",t);
+    Fill1D("vertical_0",vTrY);
+    Fill1D("radial_0",R);
+    Fill1D("vertical60_0",vTrY);
+    Fill1D("radial60_0",R);
+    Fill1D("p_0",p);
+    Fill2D("xz_0",vTrX,vTrZ);
+    Fill2D("Evp_0",p,E);
+    Fill1D("logEop_0",logEop);
+
+    Fill1D("time_"+std::to_string(k),t);
+    Fill1D("vertical_"+std::to_string(k),vTrY);
+    Fill1D("radial_"+std::to_string(k),R);
+    Fill1D("vertical60_"+std::to_string(k),vTrY);
+    Fill1D("radial60_"+std::to_string(k),R);
+    Fill1D("p_"+std::to_string(k),p);
+    Fill2D("xz_"+std::to_string(k),vTrX,vTrZ);
+    Fill2D("Evp_"+std::to_string(k),p,E);
+    Fill1D("logEop_"+std::to_string(k),logEop);
+
+    Fill1D("St"+std::to_string(calo-1)+"_time_0",t);
+    Fill1D("St"+std::to_string(calo-1)+"_vertical_0",vTrY);
+    Fill1D("St"+std::to_string(calo-1)+"_radial_0",R);
+    Fill1D("St"+std::to_string(calo-1)+"_vertical60_0",vTrY);
+    Fill1D("St"+std::to_string(calo-1)+"_radial60_0",R);
+    Fill1D("St"+std::to_string(calo-1)+"_p_0",p);
+    Fill2D("St"+std::to_string(calo-1)+"_xz_0",vTrX,vTrZ);
+    Fill2D("St"+std::to_string(calo-1)+"_Evp_0",p,E);
+    Fill1D("St"+std::to_string(calo-1)+"_logEop_0",logEop);
+    Fill1D("St"+std::to_string(calo-1)+"_dt_0",dt);
+
+    Fill1D("St"+std::to_string(calo-1)+"_time_"+std::to_string(k),t);
+    Fill1D("St"+std::to_string(calo-1)+"_vertical_"+std::to_string(k),vTrY);
+    Fill1D("St"+std::to_string(calo-1)+"_radial_"+std::to_string(k),R);
+    Fill1D("St"+std::to_string(calo-1)+"_vertical60_"+std::to_string(k),vTrY);
+    Fill1D("St"+std::to_string(calo-1)+"_radial60_"+std::to_string(k),R);
+    Fill1D("St"+std::to_string(calo-1)+"_p_"+std::to_string(k),p);
+    Fill2D("St"+std::to_string(calo-1)+"_xz_"+std::to_string(k),vTrX,vTrZ);
+    Fill2D("St"+std::to_string(calo-1)+"_Evp_"+std::to_string(k),p,E);
+    Fill1D("St"+std::to_string(calo-1)+"_logEop_"+std::to_string(k),logEop);
+    Fill1D("St"+std::to_string(calo-1)+"_dt_"+std::to_string(k),dt);
+
+  } //event loop
+
+  delete ctt;
+  return;
+
+}
+
+
+
+
+

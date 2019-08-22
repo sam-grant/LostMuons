@@ -1,0 +1,27 @@
+// Marco to draw momentum distributions
+// Sam Grant - Jan 2019
+
+#include <iostream>
+#include "TFile.h"
+#include "TH1D.h"
+#include "TCanvas.h"
+#include "TStyle.h"
+#include "TLegend.h"
+#include "CMAP.h"
+
+using namespace std;
+
+int main() {
+
+  string fname2D = "Plots/EvpFakeMIPS.png";
+  string inputName = "TrackClusterFakeMIPs";
+
+  TFile *input = TFile::Open(("../ReadOldNTuples/"+inputName+"/RootFiles/"+inputName+"Complete.root").c_str());
+
+  TH2D *h2D = (TH2D*)input->Get("Evp_0");
+  h2D->GetXaxis()->SetLimits(0,4);//;
+  h2D->GetYaxis()->SetLimits(0,4);
+  CMAP(h2D,"Stn 12 & 18;Track Momentum, p [GeV];Cluster Energy, E [GeV]",fname2D);
+ 
+  return 0;
+} 

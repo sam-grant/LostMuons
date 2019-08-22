@@ -1,0 +1,26 @@
+Resolution : At 1.5 GeV, the resolutions are 1 mm on the radial position, 1.5 mm on the vertical position, 0.5% on the curvature, and 1 mrad on the vertical angle. 
+
+Data used: /unix/muons/g-2/omegaEU/v9_11_00
+
+Ultimately, the aim of the exercise is to investigate how lost muon contamination messes up beam position measurements. The final four numbers will be the difference in the radial/vertical means and width of the all tracker tree with and without scaled lost muons subtracted. 
+
+Cuts all:
+p < 0.05
+hitVolume = True
+
+Cuts Cluster:
+-10 ns < t_cluster - t_track < 6 ns
+dR < 30 mm
+
+ReadNTuples / Plotter Code 
+--------------------------------------------------------------------------
+PlotterTrackPerCluster.C : Reads the tracker only branch, where one event is one track
+PlotterTrackClusterPerCluster.C : Reads the track-cluster branch, where one event is one track-cluster match
+PlotterTrackClusterPerCluster.C : Reads the track-cluster branch, where one event is one track-cluster match, 
+
+  
+
+
+
+
+
