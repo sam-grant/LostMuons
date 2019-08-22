@@ -200,7 +200,9 @@ int main() {
     double dRMS_err = sqrt( (subMu->GetRMSError())*(subMu->GetRMSError()) + (tr->GetRMSError())*(tr->GetRMSError()) ); 
     cout<<"******************* RESULT ******************* "<<endl;
     cout<<"St"<<stn<<" dMean = "<<dMean<<"+/-"<<dMean_err<<endl;
-    cout<<"St"<<stn<<" dRMS = "<<dRMS<<"+/-"<<dRMS_err<<endl;
+    cout<<"St"<<stn<<" dRMS = "<<dRMS<<"+/-"<<dRMS_err<<"\n"<<endl;
+
+    cout<<stn<<","<<dMean<<","<<dMean_err<<","<<dRMS<<","<<dRMS_err<<endl;
   }
   return 0;
 } 

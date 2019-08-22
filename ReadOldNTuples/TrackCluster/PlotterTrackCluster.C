@@ -82,7 +82,7 @@ void Plotter::Run() {
     const double vTrY = ctt->decayVertexPosY;
     const double vTrZ = ctt->decayVertexPosZ;
     // Magic radius
-    const double magicRadius = 7112; //[mm]
+    const int magicRadius = 7112; //[mm]
     // Radial position backwards
     const double R = sqrt(vTrX*vTrX+vTrZ*vTrZ) - magicRadius;
     // Forwards calo decay vertices
@@ -99,6 +99,7 @@ void Plotter::Run() {
     const double dR = sqrt(dX*dX + dY*dY);
     // Cluster energy
     const double E = ctt->clusterE;
+    // Track momentum
     const double p = ctt -> trackMomentum;
     // Decay time
     const double t = (ctt -> decayTime);
