@@ -52,6 +52,7 @@ void Plotter::Run() {
   //loop over the clusterTracker/tracker tree:
   while( NextTrEvent() ) {
 
+    if(tr->passCandidateQuality == false) continue;
     if(tr->passTrackQuality == false) continue;
     if(tr->hitVolume == true) continue;
       

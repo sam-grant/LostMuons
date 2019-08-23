@@ -1,0 +1,20 @@
+##################################################
+Stn 12
+Lost Muon Fraction = 0.0441136 +/- 0.000873301
+Non Lost Muon Fraction = 0.955886 +/- 0.00149359
+Lost Muon Efficiency  = 66.9244 +/- 1.32488%
+Non Lost Muons Efficiency  = 94.7323 +/- 0.148021%
+Scale Factor Lost Muons = 1.49422 +/- 0.0295806
+Scale Factor Non Lost Muons = 1.05561 +/- 0.00164941
+##################################################
+
+
+##################################################
+Stn 18
+Lost Muon Fraction = 0.0607779 +/- 0.00086011
+Non Lost Muon Fraction = 0.939222 +/- 0.00145225
+Lost Muon Efficiency  = 62.4823 +/- 0.884229%
+Non Lost Muons Efficiency  = 94.4473 +/- 0.146037%
+Scale Factor Lost Muons = 1.60045 +/- 0.0226491
+Scale Factor Non Lost Muons = 1.05879 +/- 0.00163713
+##################################################

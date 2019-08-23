@@ -1,0 +1,208 @@
+//Code to find the fraction of events between tracker and cluster between 2.2 and 3.2 MeV 
+// Sam Grant - Feb 2019
+
+#include <iostream>
+#include "TFile.h"
+#include "TH1D.h"
+#include "TCanvas.h"
+#include "TPaveStats.h"
+#include "TFractionFitter.h"
+#include "THStack.h"
+#include "TLegend.h"
+#include "TStyle.h"
+#include "TObject.h"
+
+using namespace std; 
+
+int main() {
+
+  // Read inputs
+  /* string trkInputFname = "../ReadNewNTuples/Track/RootFiles/TrackCandidate.root"; */
+  /* string trkCluInputFname = "../ReadNewNTuples/TrackCluster/RootFiles/TrackClusterCandidate.root"; */
+  // Insane older ROOT files
+  string trkInputFname = "../OldRootFiles/merged_tracker_noVQ.root";
+  string trkCluInputFname = "../OldRootFiles/merged_cluster_james.root";
+  
+  TFile *trkInput = TFile::Open(trkInputFname.c_str());
+  TFile *trkCluInput = TFile::Open(trkCluInputFname.c_str());
+  
+  cout<<"Reading ... "<<trkInputFname<<", "<<trkInput<<endl;
+  cout<<"Reading ... "<<trkCluInputFname<<", "<<trkCluInput<<endl;
+  
+  for (int stn = 12 ; stn < 19 ; stn = stn + 6) {
+    if(stn==18) continue;
+    cout<<"Stn "<<stn<<endl;
+    
+    string fracFname = "Plots/St"+to_string(stn)+"FracFit.png";
+    string momRatioFname = "Plots/St"+to_string(stn)+"MomRatio.png";
+     
+    string title = "Stn"+to_string(stn)+";Track Momentum, p [MeV];Entries";
+  
+    TH1D *tr = (TH1D*)trkInput->Get(("St"+to_string(stn)+"_momentum").c_str()); // all tracks
+    TH1D *n = (TH1D*)trkCluInput->Get(("St"+to_string(stn)+"_momentum_1").c_str()); // non lost muons
+    TH1D *mu = (TH1D*)trkCluInput->Get(("St"+to_string(stn)+"_momentum_2").c_str()); // lost muons
+
+
+    n->SetLineColor(kRed);
+    n->SetMarkerColor(kRed);
+    mu->SetLineColor(kGreen-3);
+    mu->SetMarkerColor(kGreen-3);
+    tr->SetMarkerColor(kBlue);
+    tr->SetLineColor(kBlue);
+    tr->SetLineWidth(10);
+    mu->SetLineWidth(10);
+    n->SetLineWidth(10);
+
+    /* f1->Save(); */
+    /* f2->Save();  */
+
+    /////////////////////////////////////////////////////////////////////////////
+    //Fractional Fit
+    ////////////////////
+   
+    //Cluster histograms are put in this array                                                   
+    TObjArray *cl = new TObjArray(3);  
+    cl->Add(mu);
+    cl->Add(n);
+
+    // Initialise
+    TFractionFitter* fit = new TFractionFitter(tr, cl);
+    // Set X range
+    int bin2300 = tr -> GetXaxis() -> FindBin(2300);
+    int bin3000 = tr -> GetXaxis() -> FindBin(3000);
+
+    fit->SetRangeX(bin2300, bin3000);//tr->GetXaxis()->FindBin(2300),tr->GetXaxis()->FindBin(3000));  
+
+    Int_t status = fit->Fit(); //Perform the fit
+    Double_t v0, v1, e0, e1; // Book fit parameters
+    cout << "fit status: " << status << endl; // Check on fit status
+
+    if (status == 0) {                      
+
+      TH1D* result = (TH1D*) fit->GetPlot(); // Book result
+      fit->GetResult(0,v0,e0);
+      fit->GetResult(1,v1,e1);
+      result->SetLineColor(kMagenta);
+      result->SetLineWidth(5);
+      //      result->SetLineStyle(3);
+      //      result->SetTitle("Fractional Fit");
+      TCanvas *c1 = new TCanvas("c1", "c1", 3000, 2000);
+      TLegend *leg0 = new TLegend(0.44,0.59,0.89,0.89);
+      leg0->SetBorderSize(0);
+
+      leg0->AddEntry(tr,"All tracks (tracker)");
+      leg0->AddEntry(n,"Non lost muons (track-cluster)");
+      leg0->AddEntry(mu,"Lost muons (track-cluster)" );
+      leg0->AddEntry(result,"Fractional fit to \"all tracks\"");
+      tr->SetStats(0);
+      tr->GetYaxis()->SetMaxDigits(3);
+      tr->GetXaxis()->SetRangeUser(2300,3000);
+      tr->Draw();
+      cl->Draw("same");
+      result->Draw("same");
+      leg0->Draw("same");
+
+      //      c1->BuildLegend(0.69,0.69,0.89,0.89);
+      tr->SetTitle(title.c_str());
+      c1 -> SaveAs(fracFname.c_str()); 
+      delete c1;
+    }
+
+    delete cl;
+
+    // Find calo efficiency
+    double integralTot = tr -> Integral(bin2300, bin3000);
+    double integralMu = mu -> Integral(bin2300, bin3000);
+    double integralNon = n -> Integral(bin2300, bin3000);
+
+    double effMu = integralMu / (integralTot  * v0 ); 
+    double effMuErr = effMu * (e0/v0);
+    double effNon = integralNon / (integralTot * v1);
+    double effNonErr = effNon * (e1/v1);
+
+    cout << "##################################################" << endl;
+    cout << "Stn " << stn << endl;
+    cout << "Lost Muon Fraction = "<<v0<<" +/- "<<e0<<endl;
+    cout << "Non Lost Muon Fraction = "<<v1<<" +/- "<<e1<<endl;
+    cout<< "Lost Muon Efficiency  = "<<effMu*100<<" +/- "<<effMuErr*100<<"%"<<endl;
+    cout<< "Non Lost Muons Efficiency  = "<<effNon*100<<" +/- "<<effNonErr*100<<"%"<<endl;
+    cout << "Scale Factor Lost Muons = " << 1./effMu <<" +/- "<<(1./effMu)*(effMuErr/effMu)<<endl;
+    cout << "Scale Factor Non Lost Muons = " << 1./effNon <<" +/- "<<(1./effNon)*(effNonErr/effNon)<<endl;
+    cout << "##################################################" << endl;
+
+    // Add those suckers, do a cross check to make sure the cluster and tracker distributions line up at high p
+  
+    // Draw momentum distribution and ratios
+
+    /*  tr->GetXaxis()->SetLimits(0,3.5); */
+    /* n->GetXaxis()->SetLimits(0,3.5); */
+    /* mu->GetXaxis()->SetLimits(0,3.5); */
+
+    TH1D *ratioNon = (TH1D*)n->Clone("ratioNon");
+    TH1D *ratioMu = (TH1D*)mu->Clone("ratioMu");
+
+    ratioNon->Divide(tr);
+    ratioMu->Divide(tr);
+
+    TCanvas *c2 = new TCanvas("c2", "c2", 3000, 3000);
+    c2->Divide(1,2);
+    c2->cd(1);
+    gStyle->SetLegendTextSize(0.04);
+    TLegend *leg1 = new TLegend(0.62,0.75,0.95,0.95);
+    
+    //    leg1->SetBorderSize(0);
+    tr->SetTitle("All tracks (tracker)");
+    n->SetTitle("Non lost muons (track-cluster)");
+    mu->SetTitle("Lost muons (track-cluster)");
+
+
+    leg1->AddEntry(tr);
+    leg1->AddEntry(n);
+    leg1->AddEntry(mu);
+    tr->SetTitle(title.c_str());
+    tr->SetStats(0);
+    n->SetStats(0);
+    mu->SetStats(0);
+    tr->Draw();
+    n->Draw("same");
+    mu->Draw("same");
+    leg1->Draw("same");
+    // tr->GetYaxis()->SetTitleOffset(0.75);
+    tr->GetXaxis()->SetRange(bin2300,bin3000);
+
+
+    c2->cd(2);
+
+    TLegend *leg2 = new TLegend(0.64,0.85,0.95,0.95);
+    //    leg2->SetBorderSize(0);
+    ratioNon->SetTitle("All tracks / non lost muons");
+    ratioMu->SetTitle("All tracks / lost muons");
+    leg2->AddEntry(ratioNon);
+    leg2->AddEntry(ratioMu);
+    
+    // ratioNon->GetYaxis()->SetTitleOffset(0.75);
+    ratioNon->SetTitle(";Track Momentum, p [MeV];Fraction");
+    ratioNon->SetStats(0);
+    ratioMu->SetStats(0);
+    ratioNon->SetLineColor(kMagenta);
+    ratioNon->SetMarkerColor(kMagenta);
+    ratioNon->SetLineWidth(10);
+    ratioMu->SetLineColor(kOrange-3);
+    ratioMu->SetMarkerColor(kOrange-3);
+    ratioMu->SetLineWidth(10);
+    ratioNon->GetXaxis()->SetRangeUser(2300,3000);
+    ratioNon->GetYaxis()->SetRangeUser(0,1);
+    ratioNon->Draw();
+    ratioMu->Draw("same");
+    leg2->Draw("same");
+    c2->cd(2)->SetGridy();
+    c2->SaveAs(momRatioFname.c_str());
+
+  }
+
+  return 0;
+
+}
+
+
+

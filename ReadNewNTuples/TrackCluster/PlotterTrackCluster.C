@@ -67,7 +67,8 @@ void Plotter::Run() {
     for(int i=0; i<am->nmatches; i++) {
 
       // Apply quality cuts
-      if(am->decayHitVolume[i] == true) continue;
+      //      if(am->decayHitVolume[i] == true) continue;
+      if(am->trkPassCandidateQuality[i] == false) continue;
       if(am->trkPassTrackQuality[i] == false) continue;
       
       // Define some variables

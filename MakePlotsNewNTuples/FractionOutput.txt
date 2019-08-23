@@ -1,0 +1,37 @@
+##################################################
+Stn 12
+Lost Muon Fraction = 0.0435592 +/- 0.00299212
+Non Lost Muon Fraction = 0.956446 +/- 0.00499047
+Lost Muon Efficiency  = 37.8185 +/- 2.59779%
+Non Lost Muons Efficiency  = 91.2053 +/- 0.475884%
+Scale Factor Lost Muons = 2.64421 +/- 0.181633
+Scale Factor Non Lost Muons = 1.09643 +/- 0.00572086
+##################################################
+
+##################################################
+Stn 18
+Lost Muon Fraction = 0.0423426 +/- 0.0024686
+Non Lost Muon Fraction = 0.957657 +/- 0.00522124
+Lost Muon Efficiency  = 56.7299 +/- 3.30739%
+Non Lost Muons Efficiency  = 90.4921 +/- 0.493372%
+Scale Factor Lost Muons = 1.76274 +/- 0.102769
+Scale Factor Non Lost Muons = 1.10507 +/- 0.00602495
+##################################################
+
+OLD RESULT
+Some crazy logic, fraction fitter ->
+  string trackerFile = "../tracker/merged_tracker_noVQ.root";
+  // Only track quality
+  string clusterFile = "../cluster_master/merged_cluster_james.root";
+vertical2.C and radii2.C ->
+merged_tracker_combined.root
+merged_cluster_combine.root
+##################################################
+Stn 18
+Lost Muon Fraction = 0.0387655 +/- 0.000896588
+Non Lost Muon Fraction = 0.961235 +/- 0.00173488
+Lost Muon Efficiency  = 57.8097 +/- 1.33705%
+Non Lost Muons Efficiency  = 90.5004 +/- 0.163339%
+Scale Factor Lost Muons = 1.72981 +/- 0.040008
+Scale Factor Non Lost Muons = 1.10497 +/- 0.0019943
+##################################################
