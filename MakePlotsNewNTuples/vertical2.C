@@ -35,8 +35,6 @@ int main() {
     return 0;
   }
  
- 
- 
 
     double sfMu;
     string h1, h2, fname1, fname2, title1;
@@ -48,13 +46,13 @@ int main() {
       h1 =  "vertical"; // tracker
       //      h2 = "vertical_2"; // cluster lost muons
       h2 = "vertical_2"; // cluster lost muons
-      title1 = "Both Stations | Vertical Decay Vertices;Vertical Decay Vertex [mm];N";
+      title1 = "Stn 12 & 18;Vertical Decay Vertex [mm];Entries";
       
       if (scale) {
-	fname1 = "../plots/tracker_vertical_subtracted.png";
+	fname1 = "Plots/VerticalScaledOld.png";
       }
       else if (!scale) { 
-	fname1 = "../plots/tracker_vertical_subtracted_noscale.png";
+	fname1 = "Plots/VerticalUnscaledOld.png";
       }	
     }
     
@@ -64,13 +62,13 @@ int main() {
       h1 =  "St18_vertical60"; // tracker
       h2 = "St18_vertical60_2"; // cluster lost muons
       
-       title1 = "Stn 18 | Vertical Decay Vertices;Vertical Decay Vertex [mm];N";
+       title1 = "Stn 18;Vertical Decay Vertex [mm];Entries";
      
       if (scale) {
-	fname1 = "../plots/stn18_tracker_vertical_subtracted.png";
+	fname1 = "Plots/St18VerticalScaledOld.png";
       }
       else if (!scale) { 
-	fname1 = "../plots/stn18_tracker_vertical_subtracted_noscale.png";
+	fname1 = "Plots/St18VerticalUnscaledOld.png";
       }
 
     }
@@ -95,16 +93,16 @@ int main() {
       subMu -> Add(mu,-1);
     cout<<"test"<<endl;
   
-    // Rename for presentation
-    v->SetName("All Tracks");
+    // Rename forOB presentation
+    v->SetName("All tracks");
     if (scale) {
-      subMu->SetName("All Tracks #minus Lost Muons (Scaled)");
-      mu->SetName("Lost Muons (Scaled)");
+      subMu->SetName("All tracks #minus lost muons");
+      mu->SetName("Lost muons");
     }
 
     else if (!scale) {
-      subMu->SetName("All Tracks #minus Lost Muons (Unscaled)");
-      mu->SetName("Lost Muons (Unscaled)");
+      subMu->SetName("All tracks #minus lost muons");
+      mu->SetName("Lost muons");
     }
 
     f1->Save();
@@ -112,22 +110,19 @@ int main() {
    
     // Draw first histogram
     v -> Draw();
-    gStyle->SetOptStat(2211);
+    gStyle->SetOptStat(2201);
     gPad->Update();
     
     // Collect stats of the first histogram 
     TPaveStats *tps1 = (TPaveStats*) v -> FindObject("stats"); 
 
-    tps1->SetTextColor(kBlue+2);
-    tps1->SetLineColor(kBlue+2);
-    /*
-    */
+    tps1->SetTextColor(kBlue);
+    tps1->SetLineColor(kBlue);
 
-    tps1->SetX1NDC(0.80);
-    tps1->SetX2NDC(0.99);
-    tps1->SetY1NDC(0.75);
-    tps1->SetY2NDC(0.99);
-
+    tps1->SetX1NDC(0.70);
+    tps1->SetX2NDC(0.89);
+    tps1->SetY1NDC(0.69);
+    tps1->SetY2NDC(0.89);
 
     double X1 = tps1->GetX1NDC();
     double Y1 = tps1->GetY1NDC();
@@ -136,61 +131,56 @@ int main() {
 
     // Draw second histogram
     subMu -> Draw();
-    gStyle->SetOptStat(2211);
+    gStyle->SetOptStat(2201);
     gPad->Update();
 
     // Collect stats of the second histogram
      
     TPaveStats *tps2 = (TPaveStats*) subMu -> FindObject("stats");
   
-    tps2->SetTextColor(kRed+2);
-    tps2->SetLineColor(kRed+2);
+    tps2->SetTextColor(kRed);
+    tps2->SetLineColor(kRed);
 
     // Put stat box beneath the first
     tps2->SetX1NDC(X1);
     tps2->SetX2NDC(X2); 
-    tps2->SetY1NDC(Y1-(Y2-Y1)); 
-    tps2->SetY2NDC(Y1);
+    tps2->SetY1NDC((Y1-0.025)-(Y2-Y1)); 
+    tps2->SetY2NDC(Y1-0.025);
 
     // Draw third histogram
-    mu -> Draw();
-    gStyle->SetOptStat(2211);
-    gPad->Update();
+    /* mu -> Draw(); */
+    /* gStyle->SetOptStat(2211); */
+     /* gPad->Update(); */
 
     // Collect stats of the third histogram
 
-    TPaveStats *tps3 = (TPaveStats*) mu -> FindObject("stats");
+    /* TPaveStats *tps3 = (TPaveStats*) mu -> FindObject("stats"); */
  
-    tps3->SetTextColor(kGreen+2);
-    tps3->SetLineColor(kGreen+2);
+    /* tps3->SetTextColor(kGreen+2); */
+    /* tps3->SetLineColor(kGreen+2); */
 
-    // Put stat box beneath the first
-    tps3->SetX1NDC(X1);
-    tps3->SetX2NDC(X2); 
-    tps3->SetY1NDC(Y1-2*(Y2-Y1)); 
-    tps3->SetY2NDC(Y1-(Y2-Y1));
+    /* // Put stat box beneath the first */
+    /* tps3->SetX1NDC(X1); */
+    /* tps3->SetX2NDC(X2);  */
+    /* tps3->SetY1NDC(Y1-2*(Y2-Y1));  */
+    /* tps3->SetY2NDC(Y1-(Y2-Y1)); */
     
     // Draw histograms on one canvas
 
-    TCanvas *c1 = new TCanvas("c1","c1",2000,1000);
+    TCanvas *c1 = new TCanvas("c1","c1",3000,3000);
 
     c1->Divide(1,2);
 
     c1->cd(1);
-    v->GetYaxis()->SetTitleSize(.05);
-    v->GetYaxis()->SetTitleOffset(0.4);
-    v->GetXaxis()->SetTitleSize(.05);
-    v->GetXaxis()->SetTitleOffset(0.9);    
 
-
-    v->SetMarkerColor(kBlue+2);
-    v->SetLineColor(kBlue+2);
-    subMu->SetMarkerColor(kRed+2);
-    subMu->SetLineColor(kRed+2);
+    v->SetMarkerColor(kBlue);
+    v->SetLineColor(kBlue);
+    subMu->SetMarkerColor(kRed);
+    subMu->SetLineColor(kRed);
     // subN->SetMarkerColor(kBlue+2);
-    //  subN->SetLineColor(kBlue+2);
-    mu->SetMarkerColor(kGreen+2);
-    mu->SetLineColor(kGreen+2);
+    //  subNnnnnn->SetLineColor(kBlue+2);
+    /*  mu->SetMarkerColor(kGreen+2); */
+    /* mu->SetLineColor(kGreen+2); */
    
     v->SetTitle(title1.c_str());
 

@@ -98,8 +98,13 @@ int main() {
     tps1->SetTextColor(kBlue);
     tps1->SetLineColor(kBlue);
 
-    tps1->SetX1NDC(0.70);
-    tps1->SetX2NDC(0.89);
+    /* tps1->SetX1NDC(0.70); */
+    /* tps1->SetX2NDC(0.89); */
+    /* tps1->SetY1NDC(0.69); */
+    /* tps1->SetY2NDC(0.89); */
+
+    tps1->SetX1NDC(0.30);
+    tps1->SetX2NDC(0.11);
     tps1->SetY1NDC(0.69);
     tps1->SetY2NDC(0.89);
 
@@ -163,7 +168,7 @@ int main() {
     //  subN->SetLineColor(kBlue+2);
     mu->SetMarkerColor(kGreen+2);
     mu->SetLineColor(kGreen+2);
-    tr->GetXaxis()->SetRangeUser(-150,150);
+    //    tr->GetXaxis()->SetRangeUser(-150,150);
     tr->SetTitle(title1.c_str());
     //    c1->cd(1)->SetLogy();
     tr->Draw();
@@ -187,7 +192,7 @@ int main() {
     ratio->SetLineWidth(5);
     //    ratio->GetYaxis()->SetRangeUser(0.4,1.5);
     ratio->GetYaxis()->SetTitle("Ratio");
-    ratio->GetXaxis()->SetRangeUser(-150,150);
+    //    ratio->GetXaxis()->SetRangeUser(-150,150);
     ratio->GetXaxis()->SetTitle("Radial Decay Vertex [mm]");
     gPad->SetGridy();
     ratio->Draw();
